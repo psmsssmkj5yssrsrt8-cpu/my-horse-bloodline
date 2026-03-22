@@ -8,7 +8,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
 :root {
   --bg:#f5f5f5;--surface:#fff;--card:#e8edf5;--text:#1a1a1a;--muted:#666e7a;
-  --border:#888; /* 枠線を少し濃くしました */
+  --border:#888; /* 枠線を濃いグレーに変更 */
   --disabled:#d8d8d8;
   --accent-s:#c0392b;--accent-m:#a0369a;
   --s-green:#2d7a2d;--s-green-bg:#d6f0d6;
@@ -36,15 +36,21 @@ h1 .s{color:var(--accent-s);}h1 .m{color:var(--accent-m);}
 .horse-header.mare{background:var(--accent-m);}
 .section-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:10px;}
 .section-title{font-size:.75rem;font-weight:700;color:var(--muted);letter-spacing:.1em;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border);}
-.section-title.s{color:var(--accent-s);}.section-title.m{color:var(--accent-m);}
-.clear-btn{width:100%;padding:10px;background:#e74c3c;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;margin-bottom:12px;}
-.clear-btn:active{opacity:.8;}
 .tree-wrap{overflow-x:auto;}
-.tree-table{border-collapse:collapse;font-size:.74rem;min-width:500px; border: 1px solid var(--border);}
-.tree-table td{border:1px solid var(--border);padding:0;height:28px;position:relative;}
+.tree-table, .pedigree-table {
+  border-collapse: collapse !important; /* 枠線を一本化 */
+  border: 1px solid #333 !important; /* 外枠を太く */
+  width: 100%;
+}
+.tree-table td, .pedigree-table td, .pedigree-table th {
+  border: 1px solid #333 !important; /* 全てのセルに黒い線を強制適用 */
+  padding: 2px;
+  height: 28px;
+}
 .tree-sex{text-align:center;font-size:.7rem;color:var(--muted);background:var(--card);width:18px;min-width:18px;}
-.tree-table input{width:100%;height:100%;border:none;background:transparent;font-family:inherit;font-size:.72rem;padding:2px 4px 2px 15px;color:var(--text);min-width:65px;}
-.tree-table input:focus{outline:2px solid #aaa;}
+.tree-table input, .pedigree-table input {
+  width:100%;height:100%;border:none;background:transparent;font-family:inherit;font-size:.72rem;padding:2px;color:var(--text);
+}
 .tree-lbl{position:absolute;top:2px;left:2px;font-size:.55rem;font-weight:700;color:rgba(0,0,0,.38);pointer-events:none;line-height:1;}
 .cell-disabled{background:var(--disabled)!important;}
 .col-a{background:var(--tree-purple);}.col-c{background:var(--tree-dkgreen);}
@@ -52,47 +58,22 @@ h1 .s{color:var(--accent-s);}h1 .m{color:var(--accent-m);}
 .col-g-green{background:var(--tree-g-green);}.col-g-blue{background:var(--tree-g-blue);}.col-g-yellow{background:var(--tree-g-yellow);}
 .col-i-green{background:var(--tree-i-green);}.col-i-blue{background:var(--tree-i-blue);}.col-i-yellow{background:var(--tree-i-yellow);}
 .col-c-purple{background:var(--tree-purple2);}.col-e-orange{background:var(--tree-orange);}.col-g-pink{background:var(--tree-pink);}
-.pedigree-wrap{overflow-x:auto;}
-.pedigree-table{width:100%;border-collapse:collapse;font-size:.72rem;min-width:440px; border: 1px solid var(--border);}
-.pedigree-table th{background:var(--card);color:var(--muted);padding:4px;text-align:center;font-weight:600;font-size:.66rem;border:1px solid var(--border);}
-.pedigree-table td{border:1px solid var(--border);padding:0;height:25px;}
-.label-cell{background:var(--card);color:var(--muted);text-align:center;font-size:.66rem;padding:2px 3px;white-space:nowrap;min-width:22px; border:1px solid var(--border);}
-.input-cell{border:1px solid var(--border);}
-.input-cell input{width:100%;height:100%;background:transparent;border:none;font-family:inherit;font-size:.7rem;padding:2px 4px;color:var(--text);}
-.input-cell input:focus{outline:1px solid #aaa;}
-.input-cell input[readonly]{background:transparent;color:var(--text);}
-.cell-off{background:var(--disabled); border:1px solid var(--border);}
-.sg td.bc{background:var(--s-green-bg)!important;}.sg td.bc input{color:var(--s-green);font-weight:600;}
-.sb td.bc{background:var(--s-blue-bg)!important;}.sb td.bc input{color:var(--s-blue);font-weight:600;}
-.m1g td.bc{background:var(--m1g-bg)!important;}.m1g td.bc input{color:var(--m1g);font-weight:600;}
-.m1b td.bc{background:var(--m1b-bg)!important;}.m1b td.bc input{color:var(--m1b);font-weight:600;}
-.m2p td.bc{background:var(--m2p-bg)!important;}.m2p td.bc input{color:var(--m2p);font-weight:600;}
+.pedigree-table th{background:var(--card);color:var(--muted);text-align:center;font-size:.66rem;}
+.label-cell{background:var(--card);color:var(--muted);text-align:center;font-size:.66rem;white-space:nowrap;min-width:22px;}
+.cell-off{background:var(--disabled);}
 .factor-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
 .fc{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 12px;text-align:center;min-width:46px;}
 .fc .fl{font-size:.62rem;color:var(--muted);display:block;}
 .fc .fv{font-size:1.1rem;font-weight:700;}
-.fc.s .fv{color:var(--accent-s);}.fc.m .fv{color:var(--accent-m);}.fc.fin .fv{color:#333;}
 .blood-box{border-radius:8px;padding:8px 10px;margin-top:6px;}
-.bb-sg{background:var(--s-green-bg);border:1px solid #90c890;}
-.bb-sb{background:var(--s-blue-bg);border:1px solid #90b8d8;}
-.bb-mg{background:var(--m1g-bg);border:1px solid #a0d8a0;}
-.bb-mb{background:var(--m1b-bg);border:1px solid #a0c8e8;}
-.bb-mp{background:var(--m2p-bg);border:1px solid #e090c0;}
-.bb-ms{background:var(--m3s-bg);border:1px solid #e09080;}
 .bb-title{font-size:.7rem;font-weight:700;margin-bottom:5px;}
-.bb-sg .bb-title{color:var(--s-green);}.bb-sb .bb-title{color:var(--s-blue);}
-.bb-mg .bb-title{color:var(--m1g);}.bb-mb .bb-title{color:var(--m1b);}
-.bb-mp .bb-title{color:var(--m2p);}.bb-ms .bb-title{color:var(--m3s);}
 .btags{display:flex;flex-wrap:wrap;gap:3px;min-height:20px;}
 .btag{border-radius:4px;padding:2px 7px;font-size:.7rem;background:rgba(0,0,0,.07);}
-.bb-sg .btag{color:var(--s-green);}.bb-sb .btag{color:var(--s-blue);}
-.bb-mg .btag{color:var(--m1g);}.bb-mb .btag{color:var(--m1b);}
-.bb-mp .btag{color:var(--m2p);}.bb-ms .btag{color:var(--m3s);}
 .empty-tag{color:var(--muted);font-size:.68rem;font-style:italic;}
 </style>
 </head>
 <body>
-<h1><span class="s"> 牡馬</span> × <span class="m"> 牝馬</span> 血統メモ</h1>
+<h1><span class="s">♂ 牡馬</span> × <span class="m">♀ 牝馬</span> 血統メモ</h1>
 <div class="tabs">
   <button class="tab-btn active" id="tbtn0">馬 1</button>
   <button class="tab-btn" id="tbtn1">馬 2</button>
@@ -105,16 +86,65 @@ h1 .s{color:var(--accent-s);}h1 .m{color:var(--accent-m);}
 <div id="tab3" class="tab-pane"></div>
 
 <script>
-// (以下、JavaScript部分は同じため、前のコードと結合して使用してください。文字数制限のため後半を省略しますが、そのまま前回の後半を繋げれば動きます)
-const S_TREE=[
-  {sex:'',a:'col-a',c:'col-c',e:'col-e-green',eL:'G',g:'col-g-green',gL:'D',i:'col-i-green',iL:'A'},
-  {sex:'',a:'col-a',c:'col-c',e:'col-e-green',eL:null,g:'col-g-green',gL:null,i:'col-i-green',iL:null},
-  {sex:'',a:null,c:null,e:'col-e-blue',eL:null,g:'col-g-blue',gL:'E',i:'col-i-blue',iL:'B'},
-  {sex:'',a:null,c:null,e:'col-e-blue',eL:null,g:'col-g-blue',gL:null,i:'col-i-blue',iL:null},
-  {sex:'',a:null,c:null,e:null,eL:null,g:'col-g-yellow',gL:'F',i:'col-i-yellow',iL:'C'},
-  {sex:'',a:null,c:null,e:null,eL:null,g:'col-g-yellow',gL:null,i:'col-i-yellow',iL:null},
-];
-// ... (中略：前回お送りしたJavaScriptの全文をここに挟みます) ...
+const S_TREE=[{sex:'♂',a:'col-a',c:'col-c',e:'col-e-green',eL:'G',g:'col-g-green',gL:'D',i:'col-i-green',iL:'A'},{sex:'♀',a:'col-a',c:'col-c',e:'col-e-green',eL:null,g:'col-g-green',gL:null,i:'col-i-green',iL:null},{sex:'♂',a:null,c:null,e:'col-e-blue',eL:null,g:'col-g-blue',gL:'E',i:'col-i-blue',iL:'B'},{sex:'♀',a:null,c:null,e:'col-e-blue',eL:null,g:'col-g-blue',gL:null,i:'col-i-blue',iL:null},{sex:'♂',a:null,c:null,e:null,eL:null,g:'col-g-yellow',gL:'F',i:'col-i-yellow',iL:'C'},{sex:'♀',a:null,c:null,e:null,eL:null,g:'col-g-yellow',gL:null,i:'col-i-yellow',iL:null}];
+const S_ROWS=[{lb:['','','','父'],sym:'G①',bt:'sg',tk:null,ro:true},{lb:['','','父','父'],sym:'G',bt:'',tk:{r:0,c:'e'}},{lb:['','父','父','父'],sym:'',bt:'',tk:null},{lb:['父','父','父','父'],sym:'',bt:'',tk:null},{lb:['父','父','母','父'],sym:'',bt:'sb',tk:null},{lb:['','父','母','父'],sym:'D',bt:'sg',tk:{r:0,c:'g'}},{lb:['父','母','父','父'],sym:'',bt:'',tk:null},{lb:['父','母','母','父'],sym:'A',bt:'sb',tk:{r:0,c:'i'}},{lb:['','','母','父'],sym:'E①',bt:'sg',tk:null,ro:true},{lb:['','母','父','父'],sym:'E',bt:'',tk:{r:2,c:'g'}},{lb:['母','父','父','父'],sym:'',bt:'',tk:null},{lb:['母','父','母','父'],sym:'B',bt:'sb',tk:{r:2,c:'i'}},{lb:['','母','母','父'],sym:'F',bt:'sg',tk:{r:4,c:'g'}},{lb:['母','母','父','父'],sym:'',bt:'',tk:null},{lb:['母','母','母','父'],sym:'C',bt:'sb',tk:{r:4,c:'i'}}];
+const M_TREE=[{sex:'♂',a:'col-a',c:'col-c',e:'col-e-green',eL:'g',g:'col-g-green',gL:'d',i:'col-i-green',iL:'a'},{sex:'♀',a:'col-a',c:'col-c',e:'col-e-green',eL:null,g:'col-g-green',gL:null,i:'col-i-green',iL:null},{sex:'♂',a:null,c:null,e:'col-e-blue',eL:null,g:'col-g-blue',gL:'e',i:'col-i-blue',iL:'b'},{sex:'♀',a:null,c:null,e:'col-e-blue',eL:null,g:'col-g-blue',gL:null,i:'col-i-blue',iL:null},{sex:'♂',a:null,c:null,e:null,eL:null,g:'col-g-yellow',gL:'f',i:'col-i-yellow',iL:'c'},{sex:'♀',a:null,c:null,e:null,eL:null,g:'col-g-yellow',gL:null,i:'col-i-yellow',iL:null},{sex:'♂',a:null,c:'col-c-purple',e:'col-e-orange',eL:'い',g:'col-g-pink',gL:'あ',i:null,iL:null},{sex:'♀',a:null,c:'col-c-purple',e:'col-e-orange',eL:null,g:'col-g-pink',gL:null,i:null,iL:null}];
+const M1=[{lb:['','','','父'],sym:'g①',bt:'m1g',auto:true,tk:{r:0,c:'e'}},{lb:['','','父','父'],sym:'g',bt:'',auto:true,tk:{r:0,c:'e'}},{lb:['','父','父','父'],sym:'●',bt:'',auto:false},{lb:['父','父','父','父'],sym:'',bt:'',auto:false},{lb:['父','父','母','父'],sym:'',bt:'m1b',auto:false},{lb:['','父','母','父'],sym:'d',bt:'m1g',auto:true,tk:{r:0,c:'g'}},{lb:['父','母','父','父'],sym:'',bt:'',auto:false},{lb:['父','母','母','父'],sym:'a',bt:'m1b',auto:true,tk:{r:0,c:'i'}},{lb:['','','母','父'],sym:'e①',bt:'m1g',auto:true,tk:{r:2,c:'g'}},{lb:['','母','父','父'],sym:'e',bt:'',auto:true,tk:{r:2,c:'g'}},{lb:['母','父','父','父'],sym:'',bt:'',auto:false},{lb:['母','父','母','父'],sym:'b',bt:'m1b',auto:true,tk:{r:2,c:'i'}},{lb:['','母','母','父'],sym:'f',bt:'m1g',auto:true,tk:{r:4,c:'g'}},{lb:['母','母','父','父'],sym:'',bt:'',auto:false},{lb:['母','母','母','父'],sym:'c',bt:'m1b',auto:true,tk:{r:4,c:'i'}}];
+const M2=[{lb:['','','','父'],sym:'う',bt:'m2p',auto:true,tk:{r:6,c:'c'}},{lb:['','','父','父'],sym:'▲',bt:'',auto:false},{lb:['','父','父','父'],sym:'■',bt:'',auto:false},{lb:['父','父','父','父'],sym:'',bt:'',auto:false},{lb:['父','父','母','父'],sym:'',bt:'',auto:false},{lb:['','父','母','父'],sym:'△',bt:'m2p',auto:false},{lb:['父','母','父','父'],sym:'',bt:'',auto:false},{lb:['父','母','母','父'],sym:'',bt:'',auto:false},{lb:['','','母','父'],sym:'い',bt:'m2p',auto:true,tk:{r:6,c:'e'}},{lb:['','母','父','父'],sym:'□',bt:'',auto:false},{lb:['母','父','父','父'],sym:'',bt:'',auto:false},{lb:['母','父','母','父'],sym:'',bt:'',auto:false},{lb:['','母','母','父'],sym:'あ',bt:'m2p',auto:true,tk:{r:6,c:'g'}},{lb:['母','母','父','父'],sym:'',bt:'',auto:false},{lb:['母','母','母','父'],sym:'',bt:'',auto:false}];
+const M3=[{lb:['','','','父'],sym:'g②',src:null,tk:{r:0,c:'e'},sal:true},{lb:['','','父','父'],sym:'g①',src:{m:'m1',r:0},sal:false},{lb:['','父','父','父'],sym:'g',src:{m:'m1',r:1},sal:false},{lb:['父','父','父','父'],sym:'●',src:{m:'m1',r:2},sal:false},{lb:['父','父','母','父'],sym:'d',src:{m:'m1',r:5},sal:false},{lb:['','父','母','父'],sym:'e①',src:{m:'m1',r:8},sal:true},{lb:['父','母','父','父'],sym:'e',src:{m:'m1',r:9},sal:false},{lb:['父','母','母','父'],sym:'f',src:{m:'m1',r:12},sal:false},{lb:['','','母','父'],sym:'う',src:{m:'m2',r:0},sal:true},{lb:['','母','父','父'],sym:'▲',src:{m:'m2',r:1},sal:false},{lb:['母','父','父','父'],sym:'■',src:{m:'m2',r:2},sal:false},{lb:['母','父','母','父'],sym:'△',src:{m:'m2',r:5},sal:false},{lb:['','母','母','父'],sym:'い',src:{m:'m2',r:8},sal:true},{lb:['母','母','父','父'],sym:'□',src:{m:'m2',r:9},sal:false},{lb:['母','母','母','父'],sym:'あ',src:{m:'m2',r:12},sal:false}];
+const FACTORS=['速','長','短','中','走'];const N=4;
+function xid(h,sec,row,col){return 'x'+h+'_'+sec+'_'+row+'_'+col;}
+function sfx(sym){if(!sym)return '';var m=sym.match(/[①②③④⑤]/);return m?m[0]:'';}
+function mkTree(h,rows,pfx,fn){
+  var o='<div class="tree-wrap"><table class="tree-table"><tbody>';
+  rows.forEach(function(row,i){
+    o+='<tr>';
+    [{cl:row.a,k:'a',lb:null},{cl:row.c,k:'c',lb:(pfx==='m'&&i===6)?'う':null},{cl:row.e,k:'e',lb:row.eL||null},{cl:row.g,k:'g',lb:row.gL||null},{cl:row.i,k:'i',lb:row.iL||null}].forEach(function(col){
+      o+='<td class="tree-sex">'+row.sex+'</td>';
+      if(col.cl){
+        var l=col.lb?'<span class="tree-lbl">'+col.lb+'</span>':'';
+        o+='<td class="'+col.cl+'">'+l+'<input type="text" id="'+xid(h,pfx+'tr',i,col.k)+'" oninput="'+fn+'('+h+','+i+',\''+col.k+'\')"></td>';
+      } else o+='<td class="cell-disabled"></td>';
+    });
+    o+='</tr>';
+  });
+  return o+'</tbody></table></div>';
+}
+function mkMtx(h,rows,sec,fn,ro){
+  var o='<div class="pedigree-wrap"><table class="pedigree-table"><thead><tr><th colspan="4">系譜</th><th>馬名</th><th>因子①</th><th>因子②</th><th>因子③</th><th>血統</th></tr></thead><tbody>';
+  rows.forEach(function(row,i){
+    var bt=row.bt||''; o+='<tr class="'+bt+'">';
+    row.lb.forEach(function(l){o+=l===''?'<td class="cell-off"></td>':'<td class="label-cell">'+l+'</td>';});
+    var ror=ro?' readonly':''; var extra=(sec==='sdt'&&(i===1||i===9))?';syncSGE('+h+')':'';
+    o+='<td class="input-cell"><input type="text" id="'+xid(h,sec,i,'nm')+'" placeholder="'+(row.sym||'馬名')+'"'+ror+' oninput="'+fn+'('+h+',\''+sec+'\','+i+')'+extra+'"></td>';
+    for(var f=1;f<=3;f++)o+='<td class="input-cell"><input type="text" id="'+xid(h,sec,i,'f'+f)+'"'+ror+' oninput="'+fn+'('+h+',\''+sec+'\','+i+')"></td>';
+    o+='<td class="input-cell"><input type="text" id="'+xid(h,sec,i,'bl')+'"'+ror+' oninput="'+fn+'('+h+',\''+sec+'\','+i+')"></td></tr>';
+  });
+  return o+'</tbody></table></div>';
+}
+function buildTab(h){
+  var html='<button class="clear-btn" onclick="clearTab('+h+')"> 馬'+(h+1)+' 全クリア</button>';
+  html+='<div class="horse-header stallion"> 牡馬 '+(h+1)+'</div><div class="section-card"><div class="section-title">掛け合わせ</div>'+mkTree(h,S_TREE,'s','sTr')+'</div>';
+  html+='<div class="section-card"><div class="section-title">種馬</div>'+mkMtx(h,S_ROWS,'sdt','sMx',false)+'</div>';
+  html+='<div class="horse-header mare"> 牝馬 '+(h+1)+'</div><div class="section-card"><div class="section-title">掛け合わせ</div>'+mkTree(h,M_TREE,'m','mTr')+'</div>';
+  html+='<div class="section-card"><div class="section-title">肌種馬</div>'+mkMtx(h,M1,'m1','mMx',false)+'</div>';
+  html+='<div class="section-card"><div class="section-title">肌肌馬</div>'+mkMtx(h,M2,'m2','mMx',false)+'</div>';
+  html+='<div class="section-card"><div class="section-title">肌馬</div>'+mkMtx(h,M3,'m3','mMx',true)+'</div>';
+  document.getElementById('tab'+h).innerHTML=html;
+}
+function switchTab(idx){for(var i=0;i<N;i++){document.getElementById('tbtn'+i).classList.toggle('active',i===idx);document.getElementById('tab'+i).classList.toggle('active',i===idx);}}
+function sTr(h,tr,col){var val=document.getElementById(xid(h,'str',tr,col)).value||'';S_ROWS.forEach(function(row,i){if(row.tk&&row.tk.r===tr&&row.tk.c===col){var el=document.getElementById(xid(h,'sdt',i,'nm'));if(el)el.value=val;}});}
+function sMx(h,sec,ri){syncSGE(h);}
+function syncSGE(h){var gNm=(document.getElementById(xid(h,'sdt',1,'nm'))||{}).value||'';var g1Nm=document.getElementById(xid(h,'sdt',0,'nm'));if(g1Nm)g1Nm.value=gNm?gNm+'①':'';}
+function mTr(h,tr,col){var val=document.getElementById(xid(h,'mtr',tr,col)).value||'';M1.forEach(function(row,i){if(row.auto&&row.tk&&row.tk.r===tr&&row.tk.c===col){var el=document.getElementById(xid(h,'m1',i,'nm'));if(el)el.value=val?val+sfx(row.sym):'';}});M2.forEach(function(row,i){if(row.auto&&row.tk&&row.tk.r===tr&&row.tk.c===col){var el=document.getElementById(xid(h,'m2',i,'nm'));if(el)el.value=val?val+sfx(row.sym):'';}});mSync(h);}
+function mMx(h,sec,ri){mSync(h);}
+function mSync(h){M3.forEach(function(row,i){if(!row.src)return;var m=row.src.m,r=row.src.r;['nm','f1','f2','f3','bl'].forEach(function(col){var s=document.getElementById(xid(h,m,r,col));var d=document.getElementById(xid(h,'m3',i,col));if(s&&d)d.value=s.value;});});}
+function clearTab(h){document.getElementById('tab'+h).querySelectorAll('input').forEach(function(el){el.value='';});}
+document.getElementById('tbtn0').addEventListener('click',function(){switchTab(0);});
+document.getElementById('tbtn1').addEventListener('click',function(){switchTab(1);});
+document.getElementById('tbtn2').addEventListener('click',function(){switchTab(2);});
+document.getElementById('tbtn3').addEventListener('click',function(){switchTab(3);});
+for(var h=0;h<N;h++){buildTab(h);}
 </script>
 </body>
 </html>

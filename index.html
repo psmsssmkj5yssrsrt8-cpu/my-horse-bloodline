@@ -12,36 +12,34 @@
   --border:#333; --disabled:#d8d8d8;
   --accent-s:#c0392b;--accent-m:#a0369a;
   --s-green-bg:#d6f0d6; --s-blue-bg:#cce6f4; --m1g-bg:#edf8ed; --m1b-bg:#e8f4ff; --m2p-bg:#fce8f8; --m3s-bg:#fadadd;
-  --tree-purple:#c8c0e8;--tree-dkgreen:#4caf50;--tree-e-green:#7dd87a;--tree-g-green:#b8e8b0;--tree-e-blue:#7ac8e8;--tree-g-blue:#b0d8f0;--tree-g-yellow:#f0e0a0;--tree-i-green:#daf0da;--tree-i-blue:#daeef8;--tree-i-yellow:#f8f0d0;--tree-purple2:#b090e0;--tree-orange:#f8c080;--tree-pink:#f8b0d0;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);padding:10px;}
-h1{text-align:center;font-size:1.2rem;margin-bottom:14px;padding-bottom:8px;border-bottom:3px solid var(--border);}
-.tabs{display:flex;gap:6px;margin-bottom:12px;}
-.tab-btn{padding:7px 15px;border:1px solid #ccc;background:#fff;border-radius:20px;cursor:pointer;}
-.tab-btn.active{background:#555;color:#fff;}
+h1{text-align:center;font-size:1.2rem;font-weight:700;margin-bottom:14px;padding-bottom:8px;border-bottom:3px solid var(--border);}
+.tabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;}
+.tab-btn{flex-shrink:0;padding:7px 18px;border:1px solid #ccc;background:#fff;border-radius:20px;cursor:pointer;font-size:.85rem;}
+.tab-btn.active{background:#555;color:#fff;font-weight:700;}
 .tab-pane{display:none;}.tab-pane.active{display:block;}
 .horse-header{text-align:center;font-weight:700;padding:10px;border-radius:10px;margin-bottom:10px;color:#fff;}
 .stallion{background:var(--accent-s);}.mare{background:var(--accent-m);}
 .section-card{background:#fff;border:1px solid #ccc;border-radius:10px;padding:10px;margin-bottom:10px;}
-.section-title{font-size:.75rem;font-weight:700;margin-bottom:8px;border-bottom:1px solid #eee;}
-.clear-btn{width:100%;padding:10px;background:#e74c3c;color:#fff;border:none;border-radius:8px;margin-bottom:12px;font-weight:700;}
-.tree-table, .pedigree-table{border-collapse:collapse;width:100%;font-size:.7rem;border:1px solid var(--border);margin-bottom:5px;}
-.tree-table td, .pedigree-table td, .pedigree-table th{border:1px solid var(--border);height:28px;text-align:center;position:relative;}
-.tree-sex{background:var(--card);width:20px;}
-.tree-table input, .pedigree-table input{width:100%;height:100%;border:none;padding:2px;font-size:.7rem;}
-.tree-lbl{position:absolute;top:1px;left:1px;font-size:.5rem;color:#999;pointer-events:none;}
-.factor-row{display:flex;gap:5px;margin-bottom:8px;}
-.fc{flex:1;background:var(--card);border:1px solid #ccc;border-radius:5px;text-align:center;padding:2px;}
-.fc .fl{font-size:.55rem;display:block;}
-.fc .fv{font-size:.9rem;font-weight:700;}
-.blood-box{border-radius:8px;padding:5px 10px;margin-top:5px;font-size:.7rem;}
+.section-title{font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:8px;border-bottom:1px solid #eee;}
+.clear-btn{width:100%;padding:10px;background:#e74c3c;color:#fff;border:none;border-radius:8px;font-weight:700;margin-bottom:12px;cursor:pointer;}
+.pedigree-wrap{overflow-x:auto;}
+.pedigree-table{border-collapse:collapse;font-size:.74rem;min-width:500px;width:100%;border:1px solid var(--border);}
+.pedigree-table th, .pedigree-table td{border:1px solid var(--border);height:28px;text-align:center;}
+.pedigree-table input{width:100%;height:100%;border:none;padding:2px 4px;font-size:.72rem;}
+.factor-row{display:flex;gap:6px;margin-bottom:10px;}
+.fc{flex:1;background:var(--card);border:1px solid #ccc;border-radius:8px;text-align:center;padding:5px;}
+.fc .fl{font-size:.6rem;display:block;color:var(--muted);}
+.fc .fv{font-size:1.1rem;font-weight:700;}
+.blood-box{border-radius:8px;padding:8px 10px;margin-top:6px;font-size:.75rem;}
 .bb-mg{background:var(--m1g-bg);border:1px solid #a0d8a0;}
 .bb-mb{background:var(--m1b-bg);border:1px solid #a0c8e8;}
 .bb-mp{background:var(--m2p-bg);border:1px solid #e090c0;}
 .bb-ms{background:var(--m3s-bg);border:1px solid #e09080;}
-.btags{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px;}
-.btag{background:rgba(255,255,255,0.6);padding:1px 5px;border-radius:3px;border:1px solid #ddd;}
+.btags{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;}
+.btag{background:rgba(255,255,255,0.5);padding:2px 7px;border-radius:4px;border:1px solid rgba(0,0,0,0.1);}
 </style>
 </head>
 <body>
@@ -59,46 +57,64 @@ h1{text-align:center;font-size:1.2rem;margin-bottom:14px;padding-bottom:8px;bord
 
 <script>
 const N=4; const FACTORS=['速','長','短','中','走'];
+const S_L=['G①','G','','','','D','','A','E①','E','','B','F','','C'];
+const M1_L=['g①','g','●','','','d','','a','e①','e','','b','f','','c'];
+const M2_L=['う','▲','■','','','△','','','い','□','','','あ','',''];
+const M3_L=['g②','g①','g','●','d','e①','e','f','う','▲','■','△','い','□','あ'];
+
 function build(h){
-  let html = `<button class="clear-btn" onclick="clearAll(${h})">馬${h+1} 全クリア</button>`;
-  html += `<div class="horse-header stallion">牡馬 ${h+1}</div>`;
-  html += `<div class="section-card"><div class="section-title">種馬マトリクス</div>${mkMx(h,'sdt',15)}</div>`;
-  html += `<div class="section-card"><div class="section-title">因子合計（牡・牝・最終）</div>`;
+  let html=`<button class="clear-btn" onclick="clearTab(${h})">馬${h+1} 全クリア</button>`;
+  html+=`<div class="horse-header stallion">牡馬 ${h+1}</div>`;
+  html+=`<div class="section-card"><div class="section-title">種馬マトリクス</div>${mkMx(h,'sdt',S_L)}</div>`;
+  html+=`<div class="section-card"><div class="section-title">因子合計</div>`;
   ['s','m','f'].forEach(t=>{ html+=`<div class="factor-row">`; FACTORS.forEach(f=>{ html+=`<div class="fc"><span class="fl">${f}(${t==='s'?'牡':t==='m'?'牝':'最'})</span><span class="fv" id="c_${h}_${t}_${f}">0</span></div>`; }); html+=`</div>`; });
-  html += `</div>`;
-  html += `<div class="section-card"><div class="section-title">血統まとめ</div>
+  html+=`</div><div class="section-card"><div class="section-title">血統まとめ</div>
     <div class="blood-box bb-mg">面白い(肌肌:緑) <div class="btags" id="b_${h}_mg"></div></div>
     <div class="blood-box bb-mb">見事(肌肌:水) <div class="btags" id="b_${h}_mb"></div></div>
     <div class="blood-box bb-mp">面白見事(肌種:桃) <div class="btags" id="b_${h}_mp"></div></div>
     <div class="blood-box bb-ms">面白見事(肌馬:橙) <div class="btags" id="b_${h}_ms"></div></div>
   </div>`;
-  html += `<div class="horse-header mare">牝馬 ${h+1}</div>`;
-  html += `<div class="section-card"><div class="section-title">肌種馬</div>${mkMx(h,'m1',15)}</div>`;
-  html += `<div class="section-card"><div class="section-title">肌肌馬</div>${mkMx(h,'m2',15)}</div>`;
-  html += `<div class="section-card"><div class="section-title">肌馬</div>${mkMx(h,'m3',15)}</div>`;
-  document.getElementById('tab'+h).innerHTML = html;
+  html+=`<div class="horse-header mare">牝馬 ${h+1}</div>`;
+  html+=`<div class="section-card"><div class="section-title">肌種馬</div>${mkMx(h,'m1',M1_ROWS=M1_L)}</div>`;
+  html+=`<div class="section-card"><div class="section-title">肌肌馬</div>${mkMx(h,'m2',M2_ROWS=M2_L)}</div>`;
+  html+=`<div class="section-card"><div class="section-title">肌馬 (自動反映)</div>${mkMx(h,'m3',M3_ROWS=M3_L,true)}</div>`;
+  document.getElementById('tab'+h).innerHTML=html;
 }
-function mkMx(h,s,rows){
-  let t='<table class="pedigree-table"><tr><th>馬名</th><th>因子1</th><th>因子2</th><th>因子3</th><th>血統</th></tr>';
-  for(let i=0;i<rows;i++){ t+=`<tr><td><input type="text" oninput="upd(${h})" id="n_${h}_${s}_${i}"></td><td><input type="text" oninput="upd(${h})" id="f1_${h}_${s}_${i}"></td><td><input type="text" oninput="upd(${h})" id="f2_${h}_${s}_${i}"></td><td><input type="text" oninput="upd(${h})" id="f3_${h}_${s}_${i}"></td><td><input type="text" oninput="upd(${h})" id="l_${h}_${s}_${i}"></td></tr>`; }
-  return t+'</table>';
+function mkMx(h,s,L,ro=false){
+  let t='<div class="pedigree-wrap"><table class="pedigree-table"><tr><th>記号</th><th>馬名</th><th>因子1</th><th>因子2</th><th>因子3</th><th>血統</th></tr>';
+  L.forEach((sym,i)=>{ t+=`<tr><td>${sym}</td><td><input type="text" ${ro?'readonly':''} id="n_${h}_${s}_${i}" oninput="sync(${h},'${s}',${i},'n')"></td><td><input type="text" id="f1_${h}_${s}_${i}" oninput="sync(${h},'${s}',${i},'f1')"></td><td><input type="text" id="f2_${h}_${s}_${i}" oninput="sync(${h},'${s}',${i},'f2')"></td><td><input type="text" id="f3_${h}_${s}_${i}" oninput="sync(${h},'${s}',${i},'f3')"></td><td><input type="text" id="l_${h}_${s}_${i}" oninput="sync(${h},'${s}',${i},'l')"></td></tr>`; });
+  return t+'</table></div>';
+}
+function sync(h,s,i,type){
+  let val=document.getElementById(`${type}_${h}_${s}_${i}`).value;
+  let sym=(s==='sdt'?S_L:(s==='m1'?M1_L:M2_L))[i];
+  if(sym){
+    let base=sym.replace(/[①②]/g,'');
+    ['sdt','m1','m2'].forEach(sec=>{
+      let L=(sec==='sdt'?S_L:(sec==='m1'?M1_L:M2_L));
+      L.forEach((ss,si)=>{ if(ss.replace(/[①②]/g,'')===base){ document.getElementById(`${type}_${h}_${sec}_${si}`).value=val; }});
+    });
+  }
+  upd(h);
 }
 function upd(h){
   let sc={}, mc={}; FACTORS.forEach(f=>{sc[f]=0;mc[f]=0;});
+  M3_L.forEach((sym,i)=>{
+    let src=sym==='g②'||sym==='g①'?'m1_0':sym==='う'?'m2_0':sym==='い'?'m2_8':sym==='あ'?'m2_12':null;
+    if(src){ let p=src.split('_'); ['n','f1','f2','f3','l'].forEach(c=>{ document.getElementById(`${c}_${h}_m3_${i}`).value=document.getElementById(`${c}_${h}_${p[0]}_${p[1]}`).value; });}
+  });
   for(let i=0;i<15;i++){ [1,2,3].forEach(n=>{ let v=document.getElementById(`f${n}_${h}_sdt_${i}`).value; if(sc.hasOwnProperty(v))sc[v]++; }); }
   for(let i=0;i<15;i++){ [1,2,3].forEach(n=>{ let v=document.getElementById(`f${n}_${h}_m3_${i}`).value; if(mc.hasOwnProperty(v))mc[v]++; }); }
-  FACTORS.forEach(f=>{
-    document.getElementById(`c_${h}_s_${f}`).textContent=sc[f];
-    document.getElementById(`c_${h}_m_${f}`).textContent=mc[f];
-    document.getElementById(`c_${h}_f_${f}`).textContent=sc[f]+mc[f];
-  });
-  setB(h,'mg','m2',[0,5]); setB(h,'mb','m2',[8,12]); setB(h,'mp','m1',[0]); setB(h,'ms','m3',[0,5,8]);
+  FACTORS.forEach(f=>{ document.getElementById(`c_${h}_s_${f}`).textContent=sc[f]; document.getElementById(`c_${h}_m_${f}`).textContent=mc[f]; document.getElementById(`c_${h}_f_${f}`).textContent=sc[f]+mc[f]; });
+  setB(h,'mg','m2',[0,5]); setB(h,'mb','m2',[8,12]); setB(h,'mp','m1',[0]);
+  let ms=[]; [0,4,5,7,8,12,14].forEach(idx=>{ let v=document.getElementById(`l_${h}_m3_${idx}`).value; if(v)ms.push(`<span class="btag">${v}</span>`); });
+  document.getElementById(`b_${h}_ms`).innerHTML=ms.join('');
 }
 function setB(h,id,s,idx){
   let arr=[]; idx.forEach(i=>{ let v=document.getElementById(`l_${h}_${s}_${i}`).value; if(v)arr.push(`<span class="btag">${v}</span>`); });
   document.getElementById(`b_${h}_${id}`).innerHTML=arr.join('');
 }
-function clearAll(h){ document.getElementById('tab'+h).querySelectorAll('input').forEach(i=>i.value=''); upd(h); }
+function clearTab(h){ document.getElementById('tab'+h).querySelectorAll('input').forEach(i=>i.value=''); upd(h); }
 function switchTab(idx){ for(let i=0;i<N;i++){ document.querySelectorAll('.tab-btn')[i].classList.toggle('active',i===idx); document.getElementById('tab'+i).classList.toggle('active',i===idx); } }
 for(let h=0;h<N;h++) build(h);
 </script>

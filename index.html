@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Horse Bloodline</title>
+<title>My Horse Bloodline - 完動版</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
 :root {
@@ -93,43 +93,37 @@ h1 .s{color:var(--accent-s);}h1 .m{color:var(--accent-m);}
 <div id="tab3" class="tab-pane"></div>
 
 <script>
-// --- 定数定義 ---
+// 定数
 const S_TREE=[{sex:'♂',a:'col-a',c:'col-c',e:'col-e-green',eL:'G',g:'col-g-green',gL:'D',i:'col-i-green',iL:'A'},{sex:'♀',a:'col-a',c:'col-c',e:'col-e-green',eL:null,g:'col-g-green',gL:null,i:'col-i-green',iL:null},{sex:'♂',a:null,c:null,e:'col-e-blue',eL:null,g:'col-g-blue',gL:'E',i:'col-i-blue',iL:'B'},{sex:'♀',a:null,c:null,e:'col-e-blue',eL:null,g:'col-g-blue',gL:null,i:'col-i-blue',iL:null},{sex:'♂',a:null,c:null,e:null,eL:null,g:'col-g-yellow',gL:'F',i:'col-i-yellow',iL:'C'},{sex:'♀',a:null,c:null,e:null,eL:null,g:'col-g-yellow',gL:null,i:'col-i-yellow',iL:null}];
 const S_ROWS=[{lb:['','','','父'],sym:'G①',bt:'sg',tk:null,ro:true},{lb:['','','父','父'],sym:'G',bt:'',tk:{r:0,c:'e'}},{lb:['','父','父','父'],sym:'',bt:'',tk:null},{lb:['父','父','父','父'],sym:'',bt:'',tk:null},{lb:['父','父','母','父'],sym:'',bt:'sb',tk:null},{lb:['','父','母','父'],sym:'D',bt:'sg',tk:{r:0,c:'g'}},{lb:['父','母','父','父'],sym:'',bt:'',tk:null},{lb:['父','母','母','父'],sym:'A',bt:'sb',tk:{r:0,c:'i'}},{lb:['','','母','父'],sym:'E①',bt:'sg',tk:null,ro:true},{lb:['','母','父','父'],sym:'E',bt:'',tk:{r:2,c:'e'}},{lb:['母','父','父','父'],sym:'',bt:'',tk:null},{lb:['母','父','母','父'],sym:'B',bt:'sb',tk:{r:2,c:'i'}},{lb:['','母','母','父'],sym:'F',bt:'sg',tk:{r:4,c:'g'}},{lb:['母','母','父','父'],sym:'',bt:null},{lb:['母','母','母','父'],sym:'C',bt:'sb',tk:{r:4,c:'i'}}];
 const M_TREE=[{sex:'♂',a:'col-a',c:'col-c',e:'col-e-green',eL:'g',g:'col-g-green',gL:'d',i:'col-i-green',iL:'a'},{sex:'♀',a:'col-a',c:'col-c',e:'col-e-green',eL:null,g:'col-g-green',gL:null,i:'col-i-green',iL:null},{sex:'♂',a:null,c:null,e:'col-e-blue',eL:null,g:'col-g-blue',gL:'e',i:'col-i-blue',iL:'b'},{sex:'♀',a:null,c:null,e:'col-e-blue',eL:null,g:'col-g-blue',gL:null,i:'col-i-blue',iL:null},{sex:'♂',a:null,c:null,e:null,eL:null,g:'col-g-yellow',gL:'f',i:'col-i-yellow',iL:'c'},{sex:'♀',a:null,c:null,e:null,eL:null,g:'col-g-yellow',gL:null,i:'col-i-yellow',iL:null},{sex:'♂',a:null,c:'col-c-purple',e:'col-e-orange',eL:'い',g:'col-g-pink',gL:'あ',i:null,iL:null},{sex:'♀',a:null,c:'col-c-purple',e:'col-e-orange',eL:null,g:'col-g-pink',gL:null,i:null,iL:null}];
 const M1=[{lb:['','','','父'],sym:'g①',bt:'m1g',auto:true,tk:{r:0,c:'e'}},{lb:['','','父','父'],sym:'g',bt:'',auto:true,tk:{r:0,c:'e'}},{lb:['','父','父','父'],sym:'●',bt:'',auto:false},{lb:['父','父','父','父'],sym:'',bt:'',auto:false},{lb:['父','父','母','父'],sym:'',bt:'m1b',auto:false},{lb:['','父','母','父'],sym:'d',bt:'m1g',auto:true,tk:{r:0,c:'g'}},{lb:['父','母','父','父'],sym:'',bt:'',auto:false},{lb:['父','母','母','父'],sym:'a',bt:'m1b',auto:true,tk:{r:0,c:'i'}},{lb:['','','母','父'],sym:'e①',bt:'m1g',auto:true,tk:{r:2,c:'g'}},{lb:['','母','父','父'],sym:'e',bt:'',auto:true,tk:{r:2,c:'g'}},{lb:['母','父','父','父'],sym:'',bt:'',auto:false},{lb:['母','父','母','父'],sym:'b',bt:'m1b',auto:true,tk:{r:2,c:'i'}},{lb:['','母','母','父'],sym:'f',bt:'m1g',auto:true,tk:{r:4,c:'g'}},{lb:['母','母','父','父'],sym:'',bt:'',auto:false},{lb:['母','母','母','父'],sym:'c',bt:'m1b',auto:true,tk:{r:4,c:'i'}}];
-const M2=[{lb:['','','','父'],sym:'う',bt:'m2p',auto:true,tk:{r:6,c:'c'}},{lb:['','','父','父'],sym:'▲',bt:'',auto:false},{lb:['','父','父','父'],sym:'■',bt:'',auto:false},{lb:['父','父','父','父'],sym:'',bt:'',auto:false},{lb:['父','父','母','父'],sym:'',bt:'',auto:false},{lb:['','父','母','父'],sym:'△',bt:'m2p',auto:false},{lb:['父','母','父','父'],sym:'',bt:'',auto:false},{lb:['父','母','母','父'],sym:'',bt:'',auto:false},{lb:['','','母','父'],sym:'い',bt:'m2p',auto:true,tk:{r:6,c:'e'}},{lb:['','母','父','父'],sym:'□',bt:'',auto:false},{lb:['母','父','父','父'],sym:'',bt:'',auto:false},{lb:['母','父','母','父'],sym:'bt','',auto:false},{lb:['','母','母','父'],sym:'あ',bt:'m2p',auto:true,tk:{r:6,c:'g'}},{lb:['母','母','父','父'],sym:'',bt:'',auto:false},{lb:['母','母','母','父'],sym:'',bt:'',auto:false}];
+const M2=[{lb:['','','','父'],sym:'う',bt:'m2p',auto:true,tk:{r:6,c:'c'}},{lb:['','','父','父'],sym:'▲',bt:'',auto:false},{lb:['','父','父','父'],sym:'■',bt:'',auto:false},{lb:['父','父','父','父'],sym:'',bt:'',auto:false},{lb:['父','父','母','父'],sym:'',bt:'',auto:false},{lb:['','父','母','父'],sym:'△',bt:'m2p',auto:false},{lb:['父','母','父','父'],sym:'',bt:'',auto:false},{lb:['父','母','母','父'],sym:'',bt:'',auto:false},{lb:['','','母','父'],sym:'い',bt:'m2p',auto:true,tk:{r:6,c:'e'}},{lb:['','母','父','父'],sym:'□',bt:'',auto:false},{lb:['母','父','父','父'],sym:'',bt:'',auto:false},{lb:['母','父','母','父'],sym:'',bt:'',auto:false},{lb:['','母','母','父'],sym:'あ',bt:'m2p',auto:true,tk:{r:6,c:'g'}},{lb:['母','母','父','父'],sym:'',bt:'',auto:false},{lb:['母','母','母','父'],sym:'',bt:'',auto:false}];
 const M3=[{lb:['','','','父'],sym:'g②',src:null,tk:{r:0,c:'e'},sal:true},{lb:['','','父','父'],sym:'g①',src:{m:'m1',r:0},sal:false},{lb:['','父','父','父'],sym:'g',src:{m:'m1',r:1},sal:false},{lb:['父','父','父','父'],sym:'●',src:{m:'m1',r:2},sal:false},{lb:['父','父','母','父'],sym:'d',src:{m:'m1',r:5},sal:false},{lb:['','父','母','父'],sym:'e①',src:{m:'m1',r:8},sal:true},{lb:['父','母','父','父'],sym:'e',src:{m:'m1',r:9},sal:false},{lb:['父','母','母','父'],sym:'f',src:{m:'m1',r:12},sal:false},{lb:['','','母','父'],sym:'う',src:{m:'m2',r:0},sal:true},{lb:['','母','父','父'],sym:'▲',src:{m:'m2',r:1},sal:false},{lb:['母','父','父','父'],sym:'■',src:{m:'m2',r:2},sal:false},{lb:['母','父','母','父'],sym:'△',src:{m:'m2',r:5},sal:false},{lb:['','母','母','父'],sym:'い',src:{m:'m2',r:8},sal:true},{lb:['母','母','父','父'],sym:'□',src:{m:'m2',r:9},sal:false},{lb:['母','母','母','父'],sym:'あ',src:{m:'m2',r:12},sal:false}];
 const FACTORS=['速','長','短','中','走'];const N=4;
 
-// --- 共通ロジック ---
+// 保存・読込
+function saveData(){
+  const data={};
+  document.querySelectorAll('input[id^="x"]').forEach(el=>{ if(el.value) data[el.id]=el.value; });
+  localStorage.setItem('horse_bloodline_final', JSON.stringify(data));
+}
+function loadData(){
+  const saved=localStorage.getItem('horse_bloodline_final');
+  if(!saved)return;
+  const data=JSON.parse(saved);
+  Object.keys(data).forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.value=data[id];
+  });
+  for(let h=0;h<N;h++){ sUpd(h); mUpd(h); }
+}
+
+// UI
 function xid(h,sec,row,col){return 'x'+h+'_'+sec+'_'+row+'_'+col;}
 function sfx(sym){if(!sym)return '';var m=sym.match(/[①②③④⑤]/);return m?m[0]:'';}
 function clean(s){return s?s.replace(/[①②③④⑤]/g,''):'';}
 
-// データの自動保存（各入力時に実行）
-function saveData(){
-  const data = {};
-  document.querySelectorAll('input[id^="x"]').forEach(el => {
-    if(el.value) data[el.id] = el.value;
-  });
-  localStorage.setItem('horse_bloodline_v2', JSON.stringify(data));
-}
-
-// データの読込（起動時に一回実行）
-function loadData(){
-  const saved = localStorage.getItem('horse_bloodline_v2');
-  if(!saved) return;
-  const data = JSON.parse(saved);
-  Object.keys(data).forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.value = data[id];
-  });
-  // 全タブの集計を初期更新
-  for(let h=0; h<N; h++){ sUpd(h); mUpd(h); }
-}
-
-// --- UI構築関数 ---
 function mkTree(h,rows,pfx,fn){
   var o='<div class="tree-wrap"><table class="tree-table"><tbody>';
   rows.forEach(function(row,i){
@@ -198,14 +192,16 @@ function buildTab(h){
   document.getElementById('tab'+h).innerHTML=html;
 }
 
+// 処理
 function switchTab(idx){
   for(var i=0;i<N;i++){
-    document.querySelectorAll('.tab-btn')[i].classList.toggle('active',i===idx);
-    document.getElementById('tab'+i).classList.toggle('active',i===idx);
+    var btn=document.querySelectorAll('.tab-btn')[i];
+    var pane=document.getElementById('tab'+i);
+    if(btn) btn.classList.toggle('active',i===idx);
+    if(pane) pane.classList.toggle('active',i===idx);
   }
 }
 
-// --- イベント処理 ---
 function sTr(h,tr,col){
   var val=document.getElementById(xid(h,'str',tr,col)).value||'';
   var label=S_TREE[tr][col+'L'];
@@ -288,7 +284,7 @@ function clearTab(h){
   }
 }
 
-// --- 起動処理 ---
+// 初期化
 for(var h=0;h<N;h++){buildTab(h);}
 loadData();
 </script>

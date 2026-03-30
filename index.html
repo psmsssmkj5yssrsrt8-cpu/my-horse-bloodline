@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Horse Bloodline - 完動版</title>
+<title>My Horse Bloodline - 完動保存版</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
 :root {
@@ -106,20 +106,21 @@ const FACTORS=['速','長','短','中','走'];const N=4;
 function saveData(){
   const data={};
   document.querySelectorAll('input[id^="x"]').forEach(el=>{ if(el.value) data[el.id]=el.value; });
-  localStorage.setItem('horse_bloodline_final', JSON.stringify(data));
+  localStorage.setItem('horse_bloodline_data_v10', JSON.stringify(data));
 }
 function loadData(){
-  const saved=localStorage.getItem('horse_bloodline_final');
+  const saved=localStorage.getItem('horse_bloodline_data_v10');
   if(!saved)return;
   const data=JSON.parse(saved);
   Object.keys(data).forEach(id=>{
     const el=document.getElementById(id);
-    if(el)el.value=data[id];
+    if(el) el.value=data[id];
   });
+  // 読込後に全タブの表示を更新
   for(let h=0;h<N;h++){ sUpd(h); mUpd(h); }
 }
 
-// UI
+// UI生成
 function xid(h,sec,row,col){return 'x'+h+'_'+sec+'_'+row+'_'+col;}
 function sfx(sym){if(!sym)return '';var m=sym.match(/[①②③④⑤]/);return m?m[0]:'';}
 function clean(s){return s?s.replace(/[①②③④⑤]/g,''):'';}
@@ -284,7 +285,7 @@ function clearTab(h){
   }
 }
 
-// 初期化
+// 初期起動
 for(var h=0;h<N;h++){buildTab(h);}
 loadData();
 </script>

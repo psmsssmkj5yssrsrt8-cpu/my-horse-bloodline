@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Horse Bloodline - 最終保存版</title>
+<title>My Horse Bloodline - 最終改善版</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
 :root {
@@ -18,27 +18,27 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
 
 /* 保存・読込ボタンエリア */
 .save-panel { background:#333; padding:15px; border-radius:10px; margin-bottom:15px; display:flex; gap:10px; position:sticky; top:0; z-index:100; box-shadow:0 4px 10px rgba(0,0,0,0.3); }
-.io-btn { flex:1; padding:12px; border:none; border-radius:8px; font-weight:700; cursor:pointer; color:#fff; font-size:0.9rem; }
-.btn-export { background:#27ae60; } /* 保存/書き出し */
-.btn-import { background:#2980b9; } /* 読み込み */
+.io-btn { flex:1; padding:12px; border:none; border-radius:8px; font-weight:700; cursor:pointer; color:#fff; font-size:0.9rem; display:flex; align-items:center; justify-content:center; }
+.btn-export { background:#27ae60; }
+.btn-import { background:#2980b9; }
 
 h1{text-align:center;font-size:1.2rem;margin:10px 0;border-bottom:3px solid var(--border);}
 .tabs{display:flex;gap:5px;margin-bottom:10px;overflow-x:auto;}
-.tab-btn{flex-shrink:0;padding:10px 20px;border:1px solid #ccc;background:#fff;border-radius:20px;cursor:pointer;}
+.tab-btn{flex-shrink:0;padding:10px 20px;border:1px solid #ccc;background:#fff;border-radius:20px;cursor:pointer;white-space:nowrap;}
 .tab-btn.active{background:#555;color:#fff;font-weight:700;}
 .tab-pane{display:none;}.tab-pane.active{display:block;}
 
-/* テーブル・カード等 (元のデザイン維持) */
+/* デザイン */
 .section-card{background:var(--surface);border:1px solid #ccc;border-radius:10px;padding:10px;margin-bottom:10px;}
 .horse-header{text-align:center;font-size:1rem;font-weight:700;padding:10px;border-radius:10px;margin-bottom:10px;color:#fff;}
 .horse-header.stallion{background:var(--accent-s);}
 .horse-header.mare{background:var(--accent-m);}
-.tree-wrap, .pedigree-wrap{overflow-x:auto;}
+.tree-wrap, .pedigree-wrap{overflow-x:auto; margin-bottom: 10px;}
 .tree-table, .pedigree-table{border-collapse:collapse;font-size:.74rem;min-width:500px; width:100%; border:1px solid var(--border);}
 .tree-table td, .pedigree-table td, .pedigree-table th{border:1px solid var(--border);padding:0;height:28px;position:relative;}
-.tree-table input, .pedigree-table input{width:100%;height:100%;border:none;background:transparent;padding:2px 4px;}
+.tree-table input, .pedigree-table input{width:100%;height:100%;border:none;background:transparent;padding:2px 4px;font-size:0.75rem;}
 .factor-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
-.fc{background:var(--card);border:1px solid #ccc;border-radius:8px;padding:5px 12px;text-align:center;min-width:46px;}
+.fc{background:var(--card);border:1px solid #ccc;border-radius:8px;padding:5px 12px;text-align:center;min-width:55px;}
 .fc .fv{font-size:1.1rem;font-weight:700;}
 .blood-box{border-radius:8px;padding:8px 10px;margin-top:6px; border:1px solid #ccc;}
 .btags{display:flex;flex-wrap:wrap;gap:3px;min-height:20px;}
@@ -63,65 +63,57 @@ h1{text-align:center;font-size:1.2rem;margin:10px 0;border-bottom:3px solid var(
   <button class="tab-btn" onclick="switchTab(3)">馬 4</button>
 </div>
 
-<div id="tab0" class="tab-pane active"></div>
-<div id="tab1" class="tab-pane"></div>
-<div id="tab2" class="tab-pane"></div>
-<div id="tab3" class="tab-pane"></div>
+<div id="app-content">
+  <div id="tab0" class="tab-pane active"></div>
+  <div id="tab1" class="tab-pane"></div>
+  <div id="tab2" class="tab-pane"></div>
+  <div id="tab3" class="tab-pane"></div>
+</div>
 
 <script>
-// --- 基本設定とデータ構造 (元コード維持) ---
+// 定数
 const S_TREE=[{sex:'♂',a:'col-a',c:'col-c',e:'col-e-green',eL:'G',g:'col-g-green',gL:'D',i:'col-i-green',iL:'A'},{sex:'♀',a:'col-a',c:'col-c',e:'col-e-green',eL:null,g:'col-g-green',gL:null,i:'col-i-green',iL:null},{sex:'♂',a:null,c:null,e:'col-e-blue',eL:null,g:'col-g-blue',gL:'E',i:'col-i-blue',iL:'B'},{sex:'♀',a:null,c:null,e:'col-e-blue',eL:null,g:'col-g-blue',gL:null,i:'col-i-blue',iL:null},{sex:'♂',a:null,c:null,e:null,eL:null,g:'col-g-yellow',gL:'F',i:'col-i-yellow',iL:'C'},{sex:'♀',a:null,c:null,e:null,eL:null,g:'col-g-yellow',gL:null,i:'col-i-yellow',iL:null}];
-const S_ROWS=[{lb:['','','','父'],sym:'G①',bt:'sg',tk:null,ro:true},{lb:['','','父','父'],sym:'G',bt:'',tk:{r:0,c:'e'}},{lb:['','父','父','父'],sym:'',bt:'',tk:null},{lb:['父','父','父','父'],sym:'',bt:'',tk:null},{lb:['父','父','母','父'],sym:'',bt:'sb',tk:null},{lb:['','父','母','父'],sym:'D',bt:'sg',tk:{r:0,c:'g'}},{lb:['父','母','父','父'],sym:'',bt:'',tk:null},{lb:['父','母','母','父'],sym:'A',bt:'sb',tk:{r:0,c:'i'}},{lb:['','','母','父'],sym:'E①',bt:'sg',tk:null,ro:true},{lb:['','母','父','父'],sym:'E',bt:'',tk:{r:2,c:'e'}},{lb:['母','父','父','父'],sym:'',bt:'',tk:null},{lb:['母','父','母','父'],sym:'B',bt:'sb',tk:{r:2,c:'i'}},{lb:['','母','母','父'],sym:'F',bt:'sg',tk:{r:4,c:'g'}},{lb:['母','母','父','父'],sym:'',bt:null},{lb:['母','母','母','父'],sym:'C',bt:'sb',tk:{r:4,c:'i'}}];
+const S_ROWS=[{lb:['','','','父'],sym:'G①',bt:'sg'},{lb:['','','父','父'],sym:'G',bt:''},{lb:['','父','父','父'],sym:'',bt:''},{lb:['父','父','父','父'],sym:'',bt:''},{lb:['父','父','母','父'],sym:'',bt:'sb'},{lb:['','父','母','父'],sym:'D',bt:'sg'},{lb:['父','母','父','父'],sym:'',bt:''},{lb:['父','母','母','父'],sym:'A',bt:'sb'},{lb:['','','母','父'],sym:'E①',bt:'sg'},{lb:['','母','父','父'],sym:'E',bt:''},{lb:['母','父','父','父'],sym:'',bt:''},{lb:['母','父','母','父'],sym:'B',bt:'sb'},{lb:['','母','母','父'],sym:'F',bt:'sg'},{lb:['母','母','父','父'],sym:'',bt:''},{lb:['母','母','母','父'],sym:'C',bt:'sb'}];
 const M_TREE=[{sex:'♂',a:'col-a',c:'col-c',e:'col-e-green',eL:'g',g:'col-g-green',gL:'d',i:'col-i-green',iL:'a'},{sex:'♀',a:'col-a',c:'col-c',e:'col-e-green',eL:null,g:'col-g-green',gL:null,i:'col-i-green',iL:null},{sex:'♂',a:null,c:null,e:'col-e-blue',eL:null,g:'col-g-blue',gL:'e',i:'col-i-blue',iL:'b'},{sex:'♀',a:null,c:null,e:'col-e-blue',eL:null,g:'col-g-blue',gL:null,i:'col-i-blue',iL:null},{sex:'♂',a:null,c:null,e:null,eL:null,g:'col-g-yellow',gL:'f',i:'col-i-yellow',iL:'c'},{sex:'♀',a:null,c:null,e:null,eL:null,g:'col-g-yellow',gL:null,i:'col-i-yellow',iL:null},{sex:'♂',a:null,c:'col-c-purple',e:'col-e-orange',eL:'い',g:'col-g-pink',gL:'あ',i:null,iL:null},{sex:'♀',a:null,c:'col-c-purple',e:'col-e-orange',eL:null,g:'col-g-pink',gL:null,i:null,iL:null}];
-const M1=[{lb:['','','','父'],sym:'g①',bt:'m1g',auto:true,tk:{r:0,c:'e'}},{lb:['','','父','父'],sym:'g',bt:'',auto:true,tk:{r:0,c:'e'}},{lb:['','父','父','父'],sym:'●',bt:'',auto:false},{lb:['父','父','父','父'],sym:'',bt:'',auto:false},{lb:['父','父','母','父'],sym:'',bt:'m1b',auto:false},{lb:['','父','母','父'],sym:'d',bt:'m1g',auto:true,tk:{r:0,c:'g'}},{lb:['父','母','父','父'],sym:'',bt:'',auto:false},{lb:['父','母','母','父'],sym:'a',bt:'m1b',auto:true,tk:{r:0,c:'i'}},{lb:['','','母','父'],sym:'e①',bt:'m1g',auto:true,tk:{r:2,c:'g'}},{lb:['','母','父','父'],sym:'e',bt:'',auto:true,tk:{r:2,c:'g'}},{lb:['母','父','父','父'],sym:'',bt:'',auto:false},{lb:['母','父','母','父'],sym:'b',bt:'m1b',auto:true,tk:{r:2,c:'i'}},{lb:['','母','母','父'],sym:'f',bt:'m1g',auto:true,tk:{r:4,c:'g'}},{lb:['母','母','父','父'],sym:'',bt:'',auto:false},{lb:['母','母','母','父'],sym:'c',bt:'m1b',auto:true,tk:{r:4,c:'i'}}];
-const M2=[{lb:['','','','父'],sym:'う',bt:'m2p',auto:true,tk:{r:6,c:'c'}},{lb:['','','父','父'],sym:'▲',bt:'',auto:false},{lb:['','父','父','父'],sym:'■',bt:'',auto:false},{lb:['父','父','父','父'],sym:'',bt:'',auto:false},{lb:['父','父','母','父'],sym:'',bt:'',auto:false},{lb:['','父','母','父'],sym:'△',bt:'m2p',auto:false},{lb:['父','母','父','父'],sym:'',bt:'',auto:false},{lb:['父','母','母','父'],sym:'',bt:'',auto:false},{lb:['','','母','父'],sym:'い',bt:'m2p',auto:true,tk:{r:6,c:'e'}},{lb:['','母','父','父'],sym:'□',bt:'',auto:false},{lb:['母','父','父','父'],sym:'',bt:'',auto:false},{lb:['母','父','母','父'],sym:'',bt:'',auto:false},{lb:['','母','母','父'],sym:'あ',bt:'m2p',auto:true,tk:{r:6,c:'g'}},{lb:['母','母','父','父'],sym:'',bt:'',auto:false},{lb:['母','母','母','父'],sym:'',bt:'',auto:false}];
-const M3=[{lb:['','','','父'],sym:'g②',src:null,tk:{r:0,c:'e'},sal:true},{lb:['','','父','父'],sym:'g①',src:{m:'m1',r:0},sal:false},{lb:['','父','父','父'],sym:'g',src:{m:'m1',r:1},sal:false},{lb:['父','父','父','父'],sym:'●',src:{m:'m1',r:2},sal:false},{lb:['父','父','母','父'],sym:'d',src:{m:'m1',r:5},sal:false},{lb:['','父','母','父'],sym:'e①',src:{m:'m1',r:8},sal:true},{lb:['父','母','父','父'],sym:'e',src:{m:'m1',r:9},sal:false},{lb:['父','母','母','父'],sym:'f',src:{m:'m1',r:12},sal:false},{lb:['','','母','父'],sym:'う',src:{m:'m2',r:0},sal:true},{lb:['','母','父','父'],sym:'▲',src:{m:'m2',r:1},sal:false},{lb:['母','父','父','父'],sym:'■',src:{m:'m2',r:2},sal:false},{lb:['母','父','母','父'],sym:'△',src:{m:'m2',r:5},sal:false},{lb:['','母','母','父'],sym:'い',src:{m:'m2',r:8},sal:true},{lb:['母','父','母','父'],sym:'□',src:{m:'m2',r:9},sal:false},{lb:['母','母','母','父'],sym:'あ',src:{m:'m2',r:12},sal:false}];
+const M1=[{lb:['','','','父'],sym:'g①',bt:'m1g'},{lb:['','','父','父'],sym:'g',bt:''},{lb:['','父','父','父'],sym:'●',bt:''},{lb:['父','父','父','父'],sym:'',bt:''},{lb:['父','父','母','父'],sym:'',bt:'m1b'},{lb:['','父','母','父'],sym:'d',bt:'m1g'},{lb:['父','母','父','父'],sym:'',bt:''},{lb:['父','母','母','父'],sym:'a',bt:'m1b'},{lb:['','','母','父'],sym:'e①',bt:'m1g'},{lb:['','母','父','父'],sym:'e',bt:''},{lb:['母','父','父','父'],sym:'',bt:''},{lb:['母','父','母','父'],sym:'b',bt:'m1b'},{lb:['','母','母','父'],sym:'f',bt:'m1g'},{lb:['母','母','父','父'],sym:'',bt:''},{lb:['母','母','母','父'],sym:'c',bt:'m1b'}];
+const M2=[{lb:['','','','父'],sym:'う',bt:'m2p'},{lb:['','','父','父'],sym:'▲',bt:''},{lb:['','父','父','父'],sym:'■',bt:''},{lb:['父','父','父','父'],sym:'',bt:''},{lb:['父','父','母','父'],sym:'',bt:''},{lb:['','父','母','父'],sym:'△',bt:'m2p'},{lb:['父','母','父','父'],sym:'',bt:''},{lb:['父','母','母','父'],sym:'',bt:''},{lb:['','','母','父'],sym:'い',bt:'m2p'},{lb:['','母','父','父'],sym:'□',bt:''},{lb:['母','父','父','父'],sym:'',bt:''},{lb:['母','父','母','父'],sym:'',bt:''},{lb:['','母','母','父'],sym:'あ',bt:'m2p'},{lb:['母','母','父','父'],sym:'',bt:''},{lb:['母','母','母','父'],sym:'',bt:''}];
+const M3=[{lb:['','','','父'],sym:'g②',src:null,sal:true},{lb:['','','父','父'],sym:'g①',sal:false},{lb:['','父','父','父'],sym:'g',sal:false},{lb:['父','父','父','父'],sym:'●',sal:false},{lb:['父','父','母','父'],sym:'d',sal:false},{lb:['','父','母','父'],sym:'e①',sal:true},{lb:['父','母','父','父'],sym:'e',sal:false},{lb:['父','母','母','父'],sym:'f',sal:false},{lb:['','','母','父'],sym:'う',sal:true},{lb:['','母','父','父'],sym:'▲',sal:false},{lb:['母','父','父','父'],sym:'■',sal:false},{lb:['母','父','母','父'],sym:'△',sal:false},{lb:['','母','母','父'],sym:'い',sal:true},{lb:['母','父','母','父'],sym:'□',sal:false},{lb:['母','母','母','父'],sym:'あ',sal:false}];
 const FACTORS=['速','長','短','中','走'];const N=4;
-const DB_KEY = 'UMA_DATA_FINAL';
+const DB_KEY = 'UMA_DATA_FINAL_V1';
 
-// --- 保存・読込システム ---
+// 保存・読込
 function autoSave(){
   const data = {};
   document.querySelectorAll('input[id^="x"]').forEach(el => { if(el.value) data[el.id] = el.value; });
   localStorage.setItem(DB_KEY, JSON.stringify(data));
 }
-
 function manualExport(){
   autoSave();
   const saved = localStorage.getItem(DB_KEY);
-  if(!saved) { alert("保存するデータがありません"); return; }
+  if(!saved) { alert("データがありません"); return; }
   const blob = new Blob([saved], {type: 'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'uma_backup.json';
+  a.download = 'uma_data_backup.json';
   a.click();
-  alert("ファイルに保存しました。\n（ダウンロードフォルダを確認してください）");
 }
-
-function manualImport(event){
-  const file = event.target.files[0];
+function manualImport(e){
+  const file = e.target.files[0];
   if(!file) return;
   const reader = new FileReader();
-  reader.onload = (e) => {
+  reader.onload = (ev) => {
     try {
-      const data = JSON.parse(e.target.result);
-      // 全入力欄クリア
+      const data = JSON.parse(ev.target.result);
       document.querySelectorAll('input[id^="x"]').forEach(el => el.value = '');
-      // データ流し込み
-      Object.keys(data).forEach(id => {
-        const el = document.getElementById(id);
-        if(el) el.value = data[id];
-      });
-      // 保存と再計算
-      autoSave();
-      for(let h=0; h<N; h++){ sUpd(h); mUpd(h); }
-      alert("読み込みが完了しました");
-    } catch(err) { alert("エラー: 正しいファイルではありません"); }
+      Object.keys(data).forEach(id => { const el = document.getElementById(id); if(el) el.value = data[id]; });
+      for(let h=0;h<N;h++){ sUpd(h); mUpd(h); }
+      autoSave(); alert("復元しました");
+    } catch(err){ alert("形式エラー"); }
   };
   reader.readAsText(file);
 }
 
-// --- 以下、既存の機能関数 (修正呼び出し追加) ---
+// 構築ロジック
 function xid(h,sec,row,col){return 'x'+h+'_'+sec+'_'+row+'_'+col;}
 function sfx(sym){if(!sym)return '';var m=sym.match(/[①②③④⑤]/);return m?m[0]:'';}
 function clean(s){return s?s.replace(/[①②③④⑤]/g,''):'';}
@@ -131,55 +123,59 @@ function switchTab(idx){
   document.querySelectorAll('.tab-pane').forEach((p,i)=> p.classList.toggle('active', i===idx));
 }
 
-function sTr(h,tr,col){
-  var val=document.getElementById(xid(h,'str',tr,col)).value||'';
-  var label=S_TREE[tr][col+'L'];
-  if(label){
-    var base=clean(label);
-    S_ROWS.forEach(function(r,i){
-      if(clean(r.sym)===base){
-        var el=document.getElementById(xid(h,'sdt',i,'nm'));
-        if(el)el.value=val?(clean(val)+sfx(r.sym)):'';
-      }
+function mkTree(h,rows,pfx,fn){
+  var o='<div class="tree-wrap"><table class="tree-table"><tbody>';
+  rows.forEach((row,i)=>{
+    o+='<tr><td style="background:#eee;width:20px;text-align:center">'+row.sex+'</td>';
+    ['a','c','e','g','i'].forEach(k=>{
+      let cl = row[k];
+      if(cl){
+        let lbl = (pfx==='m'&&i===6&&k==='c') ? 'う' : (row[k+'L'] || '');
+        let lTag = lbl ? '<span style="position:absolute;top:0;left:0;font-size:0.5rem;color:#888">'+lbl+'</span>' : '';
+        o+='<td class="'+cl+'">'+lTag+'<input id="'+xid(h,pfx+'tr',i,k)+'" oninput="'+fn+'('+h+','+i+',\''+k+'\')"></td>';
+      } else o+='<td style="background:#ddd"></td>';
     });
-  }
-  sUpd(h); autoSave();
+    o+='</tr>';
+  });
+  return o+'</tbody></table></div>';
 }
 
-function sMx(h,sec,ri){ sUpd(h); autoSave(); }
-function mMx(h,sec,ri){ mSync(h); mUpd(h); autoSave(); }
+function mkMtx(h,rows,sec,fn){
+  var o='<div class="pedigree-wrap"><table class="pedigree-table"><thead><tr><th colspan="4">系譜</th><th>馬名</th><th>因子1</th><th>因子2</th><th>因子3</th><th>血統</th></tr></thead><tbody>';
+  rows.forEach((row,i)=>{
+    o+='<tr>'; row.lb.forEach(l=>o+=(l===''?'<td style="background:#eee"></td>':'<td style="text-align:center;background:#f8f8f8">'+l+'</td>'));
+    o+='<td><input id="'+xid(h,sec,i,'nm')+'" oninput="'+fn+'('+h+',\''+sec+'\','+i+')" placeholder="'+(row.sym||'')+'"></td>';
+    for(let f=1;f<=3;f++)o+='<td><input id="'+xid(h,sec,i,'f'+f)+'" oninput="'+fn+'('+h+',\''+sec+'\','+i+')"></td>';
+    o+='<td><input id="'+xid(h,sec,i,'bl')+'" oninput="'+fn+'('+h+',\''+sec+'\','+i+')"></td></tr>';
+  });
+  return o+'</tbody></table></div>';
+}
+
+function mkFactorTotal(h, pfx, title){
+  var o='<div class="section-card"><div style="text-align:center;font-weight:700;margin-bottom:5px;font-size:0.9rem">'+title+'</div><table class="pedigree-table" style="min-width:auto"><tr>';
+  FACTORS.forEach(f=>o+='<th style="background:#eee">'+f+'</th>');
+  o+='</tr><tr>';
+  FACTORS.forEach(f=>o+='<td id="fc_'+h+'_'+pfx+'_'+f+'" style="text-align:center;font-weight:700;font-size:1.1rem;height:40px">0</td>');
+  o+='</tr></table></div>';
+}
 
 function sUpd(h){
-  var cnt={};FACTORS.forEach(f=>cnt[f]=0);
-  S_ROWS.forEach((_,i)=>{for(let f=1;f<=3;f++){let v=(document.getElementById(xid(h,'sdt',i,'f'+f))||{}).value||'';v=v.trim();if(v&&cnt.hasOwnProperty(v))cnt[v]++;}});
-  FACTORS.forEach(f=>{document.getElementById('fc_'+h+'_s_'+f).textContent=cnt[f];});
-  var sg=[],sb=[];
-  S_ROWS.forEach((row,i)=>{var b=((document.getElementById(xid(h,'sdt',i,'bl'))||{}).value||'').trim();if(!b)return;if(row.bt==='sg')sg.push(b);if(row.bt==='sb')sb.push(b);});
-  setT('bsg_'+h,sg);setT('bsb_'+h,sb); finUpd(h);
-}
-
-function mTr(h,tr,col){
-  var val=document.getElementById(xid(h,'mtr',tr,col)).value||'';
-  M1.forEach((row,i)=>{if(row.auto&&row.tk&&row.tk.r===tr&&row.tk.c===col){var el=document.getElementById(xid(h,'m1',i,'nm'));if(el)el.value=val?val+sfx(row.sym):'';}});
-  M2.forEach((row,i)=>{if(row.auto&&row.tk&&row.tk.r===tr&&row.tk.c===col){var el=document.getElementById(xid(h,'m2',i,'nm'));if(el)el.value=val?val+sfx(row.sym):'';}});
-  mSync(h);mUpd(h); autoSave();
-}
-
-function mSync(h){
-  M3.forEach(row=>{ if(!row.src)return; ['nm','f1','f2','f3','bl'].forEach(col=>{
-      var s=document.getElementById(xid(h,row.src.m,row.src.r,col)), d=document.getElementById(xid(h,'m3',M3.indexOf(row),col));
-      if(s&&d)d.value=s.value;
-  });});
+  let cnt={}; FACTORS.forEach(f=>cnt[f]=0);
+  S_ROWS.forEach((_,i)=>{for(let f=1;f<=3;f++){let v=(document.getElementById(xid(h,'sdt',i,'f'+f))||{}).value||'';v=v.trim();if(cnt.hasOwnProperty(v))cnt[v]++;}});
+  FACTORS.forEach(f=>document.getElementById('fc_'+h+'_s_'+f).textContent=cnt[f]);
+  let sg=[],sb=[];
+  S_ROWS.forEach((row,i)=>{let b=(document.getElementById(xid(h,'sdt',i,'bl'))||{}).value||''; if(b){if(row.bt==='sg')sg.push(b);if(row.bt==='sb')sb.push(b);}});
+  setT('bsg_'+h,sg); setT('bsb_'+h,sb); finUpd(h);
 }
 
 function mUpd(h){
-  var cnt={};FACTORS.forEach(f=>cnt[f]=0);
-  M3.forEach((_,i)=>{for(let f=1;f<=3;f++){let v=((document.getElementById(xid(h,'m3',i,'f'+f))||{}).value||'').trim();if(v&&cnt.hasOwnProperty(v))cnt[v]++;}});
-  FACTORS.forEach(f=>{document.getElementById('fc_'+h+'_m_'+f).textContent=cnt[f];});
-  var mg=[],mb=[],mp=[],ms=[];
-  M1.forEach((row,i)=>{let b=((document.getElementById(xid(h,'m1',i,'bl'))||{}).value||'').trim();if(b){if(row.bt==='m1g')mg.push(b);if(row.bt==='m1b')mb.push(b);}});
-  M2.forEach((row,i)=>{let b=((document.getElementById(xid(h,'m2',i,'bl'))||{}).value||'').trim();if(b&&row.bt==='m2p')mp.push(b);});
-  M3.forEach((row,i)=>{if(row.sal){let b=((document.getElementById(xid(h,'m3',i,'bl'))||{}).value||'').trim();if(b)ms.push(b);}});
+  let cnt={}; FACTORS.forEach(f=>cnt[f]=0);
+  M3.forEach((_,i)=>{for(let f=1;f<=3;f++){let v=(document.getElementById(xid(h,'m3',i,'f'+f))||{}).value||'';v=v.trim();if(cnt.hasOwnProperty(v))cnt[v]++;}});
+  FACTORS.forEach(f=>document.getElementById('fc_'+h+'_m_'+f).textContent=cnt[f]);
+  let mg=[],mb=[],mp=[],ms=[];
+  M1.forEach((row,i)=>{let b=(document.getElementById(xid(h,'m1',i,'bl'))||{}).value||''; if(b){if(row.bt==='m1g')mg.push(b);if(row.bt==='m1b')mb.push(b);}});
+  M2.forEach((row,i)=>{let b=(document.getElementById(xid(h,'m2',i,'bl'))||{}).value||''; if(b&&row.bt==='m2p')mp.push(b);});
+  M3.forEach((row,i)=>{if(row.sal){let b=(document.getElementById(xid(h,'m3',i,'bl'))||{}).value||''; if(b)ms.push(b);}});
   setT('bmg_'+h,mg);setT('bmb_'+h,mb);setT('bmp_'+h,mp);setT('bms_'+h,ms); finUpd(h);
 }
 
@@ -191,56 +187,53 @@ function finUpd(h){
 }
 
 function setT(eid,arr){
-  document.getElementById(eid).innerHTML=arr.length?arr.map(b=>'<span class="btag">'+b+'</span>').join(''):'<span style="font-size:0.7rem;color:#999">未入力</span>';
-}
-
-function clearTab(h){
-  if(confirm("この馬のデータを全削除しますか？")){
-    document.getElementById('tab'+h).querySelectorAll('input').forEach(el=>el.value='');
-    sUpd(h); mUpd(h); autoSave();
-  }
-}
-
-// UI構築 (buildTabは元の構成のまま)
-function mkFC(h,pfx,cls,title){
-  var o='<div style="font-size:0.7rem;font-weight:700;margin-bottom:5px">'+title+'</div><div class="factor-row">';
-  FACTORS.forEach(f=>{o+='<div class="fc '+cls+'"><span style="display:block;font-size:0.6rem">'+f+'</span><span class="fv" id="fc_'+h+'_'+pfx+'_'+f+'">0</span></div>';});
-  return o+'</div>';
-}
-function mkBB(cls,title,eid){return '<div class="blood-box '+cls+'"><div style="font-size:0.7rem;font-weight:700;margin-bottom:3px">'+title+'</div><div class="btags" id="'+eid+'"></div></div>';}
-function mkMtx(h,rows,sec,fn,ro){
-  var o='<div class="pedigree-wrap"><table class="pedigree-table"><thead><tr><th colspan="4">系譜</th><th>馬名</th><th>因子1</th><th>因子2</th><th>因子3</th><th>血統</th></tr></thead><tbody>';
-  rows.forEach((row,i)=>{
-    o+='<tr>'; row.lb.forEach(l=>o+=(l===''?'<td style="background:#eee"></td>':'<td style="text-align:center;background:#f8f8f8">'+l+'</td>'));
-    o+='<td><input id="'+xid(h,sec,i,'nm')+'" oninput="'+fn+'('+h+',\''+sec+'\','+i+')" placeholder="'+(row.sym||'')+'"></td>';
-    for(let f=1;f<=3;f++)o+='<td><input id="'+xid(h,sec,i,'f'+f)+'" oninput="'+fn+'('+h+',\''+sec+'\','+i+')"></td>';
-    o+='<td style="background:#fafafa"><input id="'+xid(h,sec,i,'bl')+'" oninput="'+fn+'('+h+',\''+sec+'\','+i+')"></td></tr>';
-  });
-  return o+'</tbody></table></div>';
+  document.getElementById(eid).innerHTML=arr.length?arr.map(b=>'<span class="btag">'+b+'</span>').join(''):'<span style="color:#ccc">未入力</span>';
 }
 
 function buildTab(h){
   var html='<button class="clear-btn" onclick="clearTab('+h+')">全データクリア</button>';
   html+='<div class="horse-header stallion">牡馬設定</div><div class="section-card">'+mkTree(h,S_TREE,'s','sTr')+'</div>';
-  html+='<div class="section-card">'+mkMtx(h,S_ROWS,'sdt','sMx',false)+'</div>';
-  html+='<div class="section-card">'+mkFC(h,'s','s','牡馬因子合計')+' '+mkFC(h,'m','m','牝馬因子合計')+'</div>';
-  html+='<div class="section-card">'+mkFC(h,'fin','fin','最終因子合計')+'</div>';
-  html+='<div class="section-card">'+mkBB('','面白い','bsg_'+h)+mkBB('','見事','bsb_'+h)+mkBB('','面白見事','bms_'+h)+'</div>';
+  html+='<div class="section-card">'+mkMtx(h,S_ROWS,'sdt','sMx')+'</div>';
+  
+  // 1枚目写真の因子合計表を再現
+  var fHtml='<div class="section-card"><div style="text-align:center;font-weight:700;margin-bottom:5px">因子の合計数</div><table class="pedigree-table" style="min-width:auto"><tr>';
+  FACTORS.forEach(f=>fHtml+='<th style="background:#eee">'+f+'</th>');
+  fHtml+='</tr><tr>';
+  FACTORS.forEach(f=>fHtml+='<td id="fc_'+h+'_fin_'+f+'" style="text-align:center;font-weight:700;font-size:1.1rem;height:40px">0</td>');
+  fHtml+='</tr></table></div>';
+  html+=fHtml;
+
+  html+='<div class="section-card"><div style="display:flex;gap:5px"><div style="flex:1" id="sg-box">'+mkBB('','面白い','bsg_'+h)+'</div><div style="flex:1">'+mkBB('','見事','bsb_'+h)+'</div></div></div>';
+  
   html+='<div class="horse-header mare">牝馬設定</div><div class="section-card">'+mkTree(h,M_TREE,'m','mTr')+'</div>';
-  html+='<div class="section-card">'+mkMtx(h,M1,'m1','mMx',false)+mkMtx(h,M2,'m2','mMx',false)+'</div>';
-  html+='<div class="section-card">'+mkBB('','面白い','bmg_'+h)+mkBB('','見事','bmb_'+h)+mkBB('','面白見事','bmp_'+h)+'</div>';
-  html+='<div class="section-card">'+mkMtx(h,M3,'m3','mMx',true)+'</div>';
+  html+='<div class="section-card">'+mkMtx(h,M1,'m1','mMx')+mkMtx(h,M2,'m2','mMx')+'</div>';
+  
+  // 牡馬・牝馬それぞれの隠し合計用
+  html+='<div style="display:none"><span id="fc_'+h+'_s_速">0</span><span id="fc_'+h+'_s_長">0</span><span id="fc_'+h+'_s_短">0</span><span id="fc_'+h+'_s_中">0</span><span id="fc_'+h+'_s_走">0</span>';
+  html+='<span id="fc_'+h+'_m_速">0</span><span id="fc_'+h+'_m_長">0</span><span id="fc_'+h+'_m_短">0</span><span id="fc_'+h+'_m_中">0</span><span id="fc_'+h+'_m_走">0</span></div>';
+  
+  html+='<div class="section-card">'+mkMtx(h,M3,'m3','mMx')+'</div>';
   document.getElementById('tab'+h).innerHTML=html;
 }
 
+// 実行用関数（グローバル）
+window.sTr=(h,tr,k)=>{ let v=document.getElementById(xid(h,'str',tr,k)).value; autoSave(); sUpd(h); };
+window.sMx=(h,s,i)=>{ sUpd(h); autoSave(); };
+window.mMx=(h,s,i)=>{ mUpd(h); autoSave(); };
+window.mTr=(h,tr,k)=>{ autoSave(); mUpd(h); };
+window.clearTab=(h)=>{ if(confirm("クリアしますか？")){ document.getElementById('tab'+h).querySelectorAll('input').forEach(i=>i.value=''); sUpd(h); mUpd(h); autoSave(); }};
+function mkBB(cl,ti,id){return '<div class="blood-box"><div style="font-size:0.7rem;font-weight:700">'+ti+'</div><div class="btags" id="'+id+'"></div></div>';}
+
 // 起動
-for(var h=0;h<N;h++) buildTab(h);
-const saved = localStorage.getItem(DB_KEY);
-if(saved){
-  const data = JSON.parse(saved);
-  Object.keys(data).forEach(id=>{ if(document.getElementById(id)) document.getElementById(id).value = data[id]; });
-  for(let h=0;h<N;h++){ sUpd(h); mUpd(h); }
-}
+window.onload = function(){
+  for(let h=0;h<N;h++) buildTab(h);
+  const saved = localStorage.getItem(DB_KEY);
+  if(saved){
+    const data = JSON.parse(saved);
+    Object.keys(data).forEach(id=>{ if(document.getElementById(id)) document.getElementById(id).value = data[id]; });
+    for(let h=0;h<N;h++){ sUpd(h); mUpd(h); }
+  }
+};
 </script>
 </body>
 </html>

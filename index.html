@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Horse Bloodline - フルカラー完動版</title>
+<title>My Horse Bloodline - 多色・集計完成版</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
 :root {
   --bg:#f5f5f5;--surface:#fff;--text:#1a1a1a;--border:#333;
-  /* 多彩な系統色を定義 */
+  /* 系統ごとの多色設定 */
   --tree-purple:#c8c0e8; --tree-dkgreen:#4caf50;
   --tree-e-green:#7dd87a; --tree-g-green:#b8e8b0;
   --tree-e-blue:#7ac8e8; --tree-g-blue:#b0d8f0; --tree-g-yellow:#f0e0a0;
@@ -17,21 +17,15 @@
   --disabled:#d8d8d8;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);padding:10px;padding-bottom:100px;}
-
-/* 操作パネル */
-.save-panel { background:#333; padding:12px; border-radius:10px; margin-bottom:15px; display:flex; gap:8px; position:sticky; top:0; z-index:100; }
-.io-btn { flex:1; padding:10px; border:none; border-radius:8px; font-weight:700; cursor:pointer; color:#fff; font-size:0.85rem; }
-.btn-export { background:#27ae60; }
-.btn-import { background:#2980b9; }
-
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);padding:10px;}
 h1{text-align:center;font-size:1.1rem;margin:10px 0;border-bottom:2px solid var(--border);}
+
 .tabs{display:flex;gap:5px;margin-bottom:10px;overflow-x:auto;}
 .tab-btn{flex-shrink:0;padding:8px 15px;border:1px solid #ccc;background:#fff;border-radius:20px;cursor:pointer;font-size:0.85rem;}
 .tab-btn.active{background:#555;color:#fff;font-weight:700;}
 .tab-pane{display:none;}.tab-pane.active{display:block;}
 
-/* テーブルデザイン */
+/* デザイン */
 .section-card{background:var(--surface);border:1px solid #ccc;border-radius:10px;padding:10px;margin-bottom:10px;}
 .horse-header{text-align:center;font-size:0.95rem;font-weight:700;padding:8px;border-radius:8px;margin-bottom:10px;color:#fff;}
 .stallion{background:#c0392b;}
@@ -42,7 +36,7 @@ table { border-collapse:collapse; width:100%; min-width:550px; font-size:0.7rem;
 th, td { border:1px solid var(--border); height:30px; position:relative; text-align:center; }
 input { width:100%; height:100%; border:none; background:transparent; padding:0 4px; font-size:0.8rem; text-align:center; }
 
-/* 系統別カラークラス */
+/* 系統別カラー */
 .col-a{background:var(--tree-purple);} .col-c{background:var(--tree-dkgreen);}
 .col-eg{background:var(--tree-e-green);} .col-eb{background:var(--tree-e-blue);}
 .col-gg{background:var(--tree-g-green);} .col-gb{background:var(--tree-g-blue);} .col-gy{background:var(--tree-g-yellow);}
@@ -50,30 +44,23 @@ input { width:100%; height:100%; border:none; background:transparent; padding:0 
 .col-cp{background:var(--tree-purple2);} .col-eo{background:var(--tree-orange);} .col-gp{background:var(--tree-pink);}
 .locked{background:var(--disabled);}
 
-/* 因子合計表スタイル (1枚目写真再現) */
-.total-table { min-width:auto !important; margin: 0 auto; width: 100%; max-width: 400px; }
+.total-table { min-width:auto !important; width: 100%; max-width: 400px; margin: 0 auto; }
 .total-table th { background: #eee; font-weight: bold; }
 .total-table td { font-size: 1.2rem; font-weight: bold; height: 45px; }
 
 .btags { display:flex; flex-wrap:wrap; gap:3px; min-height:22px; margin-top:5px; }
-.btag { border-radius:4px; padding:2px 6px; font-size:0.7rem; background:rgba(255,255,255,0.7); border:1px solid rgba(0,0,0,0.2); font-weight:bold; }
-.clear-btn { width:100%; padding:10px; background:#e74c3c; color:#fff; border:none; border-radius:8px; font-weight:700; margin-bottom:10px; }
+.btag { border-radius:4px; padding:2px 6px; font-size:0.7rem; background:rgba(0,0,0,0.05); border:1px solid rgba(0,0,0,0.1); font-weight:bold; }
 </style>
 </head>
 <body>
 
-<div class="save-panel">
-  <button class="io-btn btn-export" onclick="manualExport()">💾 保存(書き出し)</button>
-  <button class="io-btn btn-import" onclick="document.getElementById('fileInput').click()">📂 復元(読み込み)</button>
-  <input type="file" id="fileInput" style="display:none" accept=".json" onchange="manualImport(event)">
-</div>
-
 <h1>牡馬 × 牝馬 血統メモ</h1>
 
 <div class="tabs">
-  <script>
-    for(let i=0; i<4; i++) document.write(`<button class="tab-btn ${i===0?'active':''}" onclick="switchTab(${i})">馬 ${i+1}</button>`);
-  </script>
+  <button class="tab-btn active" onclick="switchTab(0)">馬 1</button>
+  <button class="tab-btn" onclick="switchTab(1)">馬 2</button>
+  <button class="tab-btn" onclick="switchTab(2)">馬 3</button>
+  <button class="tab-btn" onclick="switchTab(3)">馬 4</button>
 </div>
 
 <div id="main-content"></div>
@@ -81,9 +68,7 @@ input { width:100%; height:100%; border:none; background:transparent; padding:0 
 <script>
 const FACTORS = ['速','長','短','中','走'];
 const N = 4;
-const DB_KEY = 'UMA_COLOR_FULL_V3';
 
-// 牡馬ツリー定義
 const S_TREE_DEF = [
   { sex:'♂', cells:[ {k:'a',c:'col-a'}, {k:'c',c:'col-c'}, {k:'e',c:'col-eg',l:'G'}, {k:'g',c:'col-gg',l:'D'}, {k:'i',c:'col-ig',l:'A'} ] },
   { sex:'♀', cells:[ {k:'a',c:'col-a'}, {k:'c',c:'col-c'}, {k:'e',c:'col-eg'}, {k:'g',c:'col-gg'}, {k:'i',c:'col-ig'} ] },
@@ -93,7 +78,6 @@ const S_TREE_DEF = [
   { sex:'♀', cells:[ {k:'g',c:'col-gy'}, {k:'i',c:'col-iy'} ] }
 ];
 
-// 牝馬ツリー定義 (追加色反映)
 const M_TREE_DEF = [
   { sex:'♂', cells:[ {k:'a',c:'col-a'}, {k:'c',c:'col-c'}, {k:'e',c:'col-eg',l:'g'}, {k:'g',c:'col-gg',l:'d'}, {k:'i',c:'col-ig',l:'a'} ] },
   { sex:'♀', cells:[ {k:'a',c:'col-a'}, {k:'c',c:'col-c'}, {k:'e',c:'col-eg'}, {k:'g',c:'col-gg'}, {k:'i',c:'col-ig'} ] },
@@ -109,33 +93,31 @@ function build() {
   let html = '';
   for(let h=0; h<N; h++) {
     html += `<div id="tab${h}" class="tab-pane ${h===0?'active':''}">`;
-    html += `<button class="clear-btn" onclick="clearData(${h})">この馬のデータを削除</button>`;
     
-    // 牡馬・牝馬の掛け合わせ表
+    // 牡馬・牝馬掛け合わせ
     html += `<div class="horse-header stallion">牡馬：血統掛け合わせ</div>`;
     html += `<div class="section-card"><div class="table-wrap"><table>` + renderTree(h, 's', S_TREE_DEF) + `</table></div></div>`;
-    
     html += `<div class="horse-header mare">牝馬：血統掛け合わせ</div>`;
     html += `<div class="section-card"><div class="table-wrap"><table>` + renderTree(h, 'm', M_TREE_DEF) + `</table></div></div>`;
 
     // 因子合計 (1枚目写真再現)
-    html += `<div class="section-card"><div style="text-align:center;font-weight:700;margin-bottom:5px;font-size:0.9rem">因子の合計数 (速・長・短・中・走)</div>`;
+    html += `<div class="section-card"><div style="text-align:center;font-weight:700;margin-bottom:5px;font-size:0.9rem">因子の合計数</div>`;
     html += `<div class="table-wrap"><table class="total-table"><tr>`;
     FACTORS.forEach(f => html += `<th>${f}</th>`);
     html += `</tr><tr>`;
     FACTORS.forEach(f => html += `<td id="x${h}_sum_${f}">0</td>`);
     html += `</tr></table></div></div>`;
 
-    // 面白い・見事タグまとめ
+    // タグ表示
     html += `<div class="section-card"><div style="display:flex;gap:5px">`;
-    html += `<div style="flex:1;border:1px solid #aaa;padding:5px;border-radius:5px"><div style="font-size:0.7rem;font-weight:700">面白い血統</div><div id="x${h}_tag_o" class="btags"></div></div>`;
-    html += `<div style="flex:1;border:1px solid #aaa;padding:5px;border-radius:5px"><div style="font-size:0.7rem;font-weight:700">見事な血統</div><div id="x${h}_tag_m" class="btags"></div></div>`;
+    html += `<div style="flex:1;border:1px solid #ccc;padding:5px;border-radius:5px"><div style="font-size:0.7rem;font-weight:700">面白い</div><div id="x${h}_tag_o" class="btags"></div></div>`;
+    html += `<div style="flex:1;border:1px solid #ccc;padding:5px;border-radius:5px"><div style="font-size:0.7rem;font-weight:700">見事</div><div id="x${h}_tag_m" class="btags"></div></div>`;
     html += `</div></div>`;
 
-    // 因子・血統詳細
+    // 詳細データ入力
     html += `<div class="horse-header stallion" style="background:#444">詳細データ入力</div>`;
     html += `<div class="section-card"><div class="table-wrap"><table>`;
-    html += `<tr style="background:#eee"><td>型</td><td>馬名</td><td>因子1</td><td>因子2</td><td>因子3</td><td>血統背景</td></tr>`;
+    html += `<tr style="background:#eee"><td>型</td><td>馬名</td><td>因子1</td><td>因子2</td><td>因子3</td><td>血統詳細</td></tr>`;
     for(let i=0; i<15; i++) {
         html += `<tr><td class="locked">${i+1}</td>`;
         html += `<td><input id="x${h}_d_${i}_nm" oninput="update(${h})"></td>`;
@@ -172,7 +154,6 @@ function update(h) {
   let f_cnt = {}; FACTORS.forEach(f => f_cnt[f] = 0);
   let o_tags = []; let m_tags = [];
   
-  // 詳細データからの集計
   for(let i=0; i<15; i++) {
     for(let f=1; f<=3; f++) {
       let val = document.getElementById(`x${h}_d_${i}_f${f}`).value.trim();
@@ -180,58 +161,15 @@ function update(h) {
     }
     let bl = document.getElementById(`x${h}_d_${i}_bl`).value.trim();
     if(bl) {
-        if(i < 8) o_tags.push(bl);
-        else m_tags.push(bl);
+        if(i < 8) o_tags.push(bl); else m_tags.push(bl);
     }
   }
-
   FACTORS.forEach(f => document.getElementById(`x${h}_sum_${f}`).innerText = f_cnt[f]);
   document.getElementById(`x${h}_tag_o`).innerHTML = o_tags.map(t => `<span class="btag">${t}</span>`).join('');
   document.getElementById(`x${h}_tag_m`).innerHTML = m_tags.map(t => `<span class="btag">${t}</span>`).join('');
-  save();
 }
 
-function save() {
-  const data = {};
-  document.querySelectorAll('input').forEach(el => { if(el.value) data[el.id] = el.value; });
-  localStorage.setItem(DB_KEY, JSON.stringify(data));
-}
-
-function load() {
-  const saved = localStorage.getItem(DB_KEY);
-  if(!saved) return;
-  const data = JSON.parse(saved);
-  Object.keys(data).forEach(id => { if(document.getElementById(id)) document.getElementById(id).value = data[id]; });
-  for(let h=0; h<N; h++) update(h);
-}
-
-function manualExport() {
-  const data = localStorage.getItem(DB_KEY);
-  const blob = new Blob([data], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'uma_bloodline_backup.json';
-  a.click();
-}
-
-function manualImport(e) {
-  const file = e.target.files[0];
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    localStorage.setItem(DB_KEY, ev.target.result);
-    location.reload();
-  };
-  reader.readAsText(file);
-}
-
-function clearData(h) {
-  if(confirm('この馬の全データを削除しますか？')) {
-    document.querySelectorAll(`[id^="x${h}_"]`).forEach(el => el.value = '');
-    update(h);
-  }
-}
-
-window.onload = () => { build(); load(); };
+window.onload = () => build();
 </script>
 </body>
 </html>
